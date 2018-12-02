@@ -1,0 +1,22 @@
+<div class="row" id="header">
+  <div class="col-6">
+    <a href="/"><h2>Món ngon hôm nay</h2></a>
+  </div>
+  <% if (typeof userID == 'undefined') var userID = 0 -%>
+  <div class="btn-group col-6 w-100 h-50" role="group"> 
+    <% if (userID > 0) { -%>
+      <a href="/users/information" class="btn btn-light btn-sm w-100 text-sm"><%= name %></a>
+      <% if (userID != 1) { -%>
+        <a href="/users/chosen-products" class="btn btn-light btn-sm w-100 text-sm">Danh sách món đã chọn</a>
+      <% } else { -%>
+        <a href="/order/list" class="btn btn-light btn-sm w-100 text-sm">Danh sách đơn hàng</a>
+      <% } -%>
+      <a href="/order/list" class="btn btn-light btn-sm w-100 text-sm">Trạng thái đơn hàng</a>
+      <a href="/users/logout" class="btn btn-light btn-sm w-100 text-sm">Đăng xuất</a>
+    <% } else { -%>
+      <div class="col-6"></div>
+      <a href="/users/login" class="btn btn-light btn-sm w-100">Đăng nhập</a>
+      <a href="/users/register" class="btn btn-light btn-sm w-100">Đăng ký</a>
+    <% } -%>
+  </div>
+</div>

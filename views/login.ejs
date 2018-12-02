@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <%- include('partials/head'); -%>
+  <style>
+    #form {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+  <body class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="jumbotron col-md-4 col-sm-8 position-absolute" id="form">
+        <h2 class="text-center">Đăng nhập</h2>
+        <form action="/users/login" method="post" class="">
+          <div class="form-group">
+            <label for="inputName">Tên đăng nhập</label>
+            <input type="text" class="form-control" id="inputUsername" aria-describedby="usernameHelp" value="<%= (typeof username != 'undefined') ? username : '' %>" name="username">
+          </div>
+          <div class="form-group">
+            <label for="inputPassword">Mật khẩu</label>
+            <input type="password" class="form-control" id="inputPassword1" name="password">
+          </div>
+          <% if (typeof error != 'undefined') { %>
+            <p class='text-danger'><%= error %></p>
+          <% } %>
+          <button type="submit" class="btn btn-primary col-4 d-sm-inline-block">Đăng nhập</button>
+          <a class="col" href="/users/register">Đăng ký tài khoản</a>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

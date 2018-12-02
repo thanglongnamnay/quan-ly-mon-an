@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/head'); -%>
+  <body class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="jumbotron col-md-6 col-sm-10 position-absolute" id="form">
+        <h2 class="text-center">Thêm sản phẩm</h2>
+        <form action="/product/add" method="post" class="">
+          <div class="row">
+            <div class="form-group col-8">
+              <label for="inputname">Tên sản phẩm</label>
+              <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp" name="name">
+            </div>
+            <div class="form-group col-4">
+              <label for="inputPrice">Giá tiền</label>
+              <input type="number" class="form-control" id="inputPrice" aria-describedby="priceHelp" name="price">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputIngredient">Nguyên liệu</label>
+            <input type="text" class="form-control" id="inputIngredient" aria-describedby="ingredientHelp" name="ingredient">
+          </div>
+          <div class="form-group">
+            <label for="inputRecipe">Công thức</label>
+            <input type="text" class="form-control" id="inputRecipe" aria-describedby="recipeHelp" name="recipe">
+          </div>
+          <div class="form-group">
+            <label for="inputDescription">Mô tả</label>
+            <textarea class="form-control" id="inputDescription" name="description" rows="5"></textarea>
+          </div>
+          <% if (typeof error != 'undefined') { %>
+            <p class='text-danger'><%= error %></p>
+          <% } %>
+          <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

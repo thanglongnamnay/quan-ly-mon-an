@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/js'); -%>
+  <%- include('../partials/head'); -%>
+  <body class="container-fluid">
+    <div class="jumbotron">
+    	<%- include('../partials/header'); %>
+    	<% if (orderList.length == 0) { -%>
+    		<h4>Chả có gì cả</h4>
+    	<% } -%>
+    	<% for (var order of orderList) { -%>
+    		<h3>Người mua: <%= order.name %></h3>
+    		<h4>Thời gian: <%= order.time %></h4>
+    		<!-- <form action="/order/<%= order.id %>/next-status" method="POST"> -->
+    		<div>
+		    	<table class="table table-bordered table-light">
+		    		<thead>
+		    			<tr>
+		    				<th scope="col">STT</th>
+		    				<th scope="col">Tên món ăn</th>
+		    				<th scope="col">Đơn giá</th>
+		    				<th scope="col">Số lượng</th>
+		    				<th scope="col">Thành tiền</th>
+		    			</tr>
+		    		</thead>
+		    		<tbody>
+		    			<% var totalPrice = order.total %>
+		    			<% for (var i = 0; i < order.productIDList.length; ++i) { -%>
+		    				<% const product = productList.find(p => p.id == order.productIDList[i]); %>
+		    				
+			    			<tr>
+			    				<th scope="row" style="width: 4rem"><%= i+1 %></th>
+			    				<th><%= product.name %></th>
+			    				<th class="product-price" style="width: 8rem"><%= product.price %>đ</th>
+			    				<th style="width: 8rem"><%= order.amountOfProductList[i] %></th>
+			    				<th class="product-total-price" style="width: 8rem"><%= product.price * order.amountOfProductList[i] %>đ</th>
+			    			</tr>
+		    			<% } -%>
+		    		</tbody>
+		    	</table>
+		    	<h4 id="total-price">Tổng tiền: <%= totalPrice %>đ</h4>
+		    	<h4 class="orderStatus" id="orderStatus-<%= order.id %>">Trạng thái: <%= order.status %></h4>
+		    	<% if (userID == 1 && order.status != 'Đã xong') { -%>
+	    			<button type="submit" class="btn btn-primary btn-lg changeStatusBtn" id="changeStatus-<%= order.id %>">
+		    		<%= order.status == 'Đang chờ' ? 'Đang làm' : 'Đã xong' %>
+		    		</button>
+		    	<% } -%>
+		    <!-- </form> -->
+			</div>
+    	<% } -%>
+    	<% var d = currentDate; %> 
+    	<% d.setDate(d.getDate() - 1) %>
+    	<a href="<%-`/order/list-${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`%>" class="btn btn-primary">Cũ hơn</a>
+    	<% d.setDate(d.getDate() + 2) %>
+    	<% if (d <= new Date()) { -%>
+    		<a href="<%-`/order/list-${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`%>" class="btn btn-primary">Mới hơn</a>
+    	<% } -%>
+    </div>
+    <script defer src="/javascripts/changestatus.js"></script>
+    <script defer src="/javascripts/updateOrderList.js"></script>
+  <!-- <script defer src="../javascripts/totalPrice.js"></script> -->
+  </body>
+</html>

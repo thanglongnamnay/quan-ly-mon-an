@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<% if (typeof userID == 'undefined') var userID = 0 %>
+  <%- include('../partials/js'); -%>
+  <%- include('../partials/head'); -%>
+  <body class="container-fluid">
+    <div class="jumbotron">
+    	<%- include('../partials/header'); %>
+    	<div class="card">
+    		<div class="card-body">
+				<h3 class="card-title"><%- product.name %></h3>
+				<form action="/product/edit/<%- product.id %>" method="POST">
+					<div class="form-group">
+						<label>Giá tiền</label>
+						<input type="number" class="form-control" value="<%= product.price %>" name="price">
+					</div>
+					<div class="form-group">
+						<label>Nguyên liệu</label>
+						<input type="text" class="form-control" value="<%= product.ingredient %>" name="ingredient">
+					</div>
+					<div class="form-group">
+						<label>Công thức</label>
+						<input type="text" class="form-control" value="<%= product.recipe %>" name="recipe">
+					</div>
+					<div class="form-group">
+						<label>Chi tiết</label>
+						<textarea class="form-control" rows="5" name="description"><%= product.description %></textarea>
+					</div>
+					<button type="submit" class="btn btn-primary d-sm-inline-block">Đồng ý</button>
+					<a href="/" class="btn btn-danger d-sm-inline-block">Huỷ bỏ</a>
+				</form>
+			</div>
+		</div>
+    </div>
+  </body>
+</html>

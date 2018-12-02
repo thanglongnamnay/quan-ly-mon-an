@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/js'); -%>
+  <%- include('../partials/head'); -%>
+  <body class="container-fluid">
+    <div class="jumbotron">
+    	<%- include('../partials/header'); %>
+    	<div class="card" style="width:20rem;">
+    		<div class="card-body">
+    			<h3 class="card-title">Thông tin tài khoản</h3>
+				<h4 class="card-text">Tên: <%- userInformation.name %></h4>
+				<h4 class="card-text">Địa chỉ: <%- userInformation.address %></h4>
+			</div>
+			<div class="card-footer">
+        <div class="btn-group w-100">
+  				<a href="/users/edit" class="btn btn-primary w-100">Sửa thông tin</a>
+  				<a href="/users/change-password" class="btn btn-success w-100">Đổi mật khẩu</a>
+        </div>
+			</div>
+    	</div>
+    </div>
+  </body>
+</html>

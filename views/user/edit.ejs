@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/head'); -%>
+  <style>
+    #form {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+  <body class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="jumbotron col-md-4 col-sm-8 position-absolute" id="form">
+        <h2 class="text-center">Sửa thông tin</h2>
+        <form action="/users/edit" method="post" class="">
+          <div class="form-group">
+            <label for="inputname">Họ và tên</label>
+            <input type="text" class="form-control" id="inputName" aria-describedby="nameHelp" name="name" value="<%= userInformation.name %>" readonly>
+          </div>
+          <div class="form-group">
+            <label for="inputAddress">Địa chỉ</label>
+            <input type="text" class="form-control" id="inputAddress" aria-describedby="addressHelp" name="address" value="<%= userInformation.address %>">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 49%">Đồng ý</button>
+          <a href="/users/information" class="btn btn-primary" style="width: 49%">Thôi</a>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

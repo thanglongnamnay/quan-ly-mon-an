@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/js'); -%>
+  <%- include('../partials/head'); -%>
+  <body class="container-fluid">
+    <div class="jumbotron">
+    	<%- include('../partials/header'); %>
+    	<div class="card">
+    		<div class="card-body">
+				<h3 class="card-title">Tên: <%- product.name %></h3>
+				<div class="card-subtitle text-disable">Giá: <%- product.price %></div>
+				<div class="card-text">Nguyên liệu: <%- product.ingredient %></div>
+				<div class="card-text">Công thức: <%- product.recipe %></div>
+				<div class="card-text"><%- product.description %></div>
+			</div>
+			<div class="card-footer">
+				<div class="btn-group w-25">
+					<% if (userID == 1) { -%>
+						<a href="/product/edit/<%- product.id %>" class="btn btn-primary w-100" id="checkboxButton<%- product.id %>">Sửa</a>
+						<a href="/product/delete/<%- product.id %>" class="btn btn-danger w-100" id="checkboxButton<%- product.id %>">Xoá</a>
+					<% } else if (userID > 1) { -%>
+						<div class="btn btn-primary w-100 chooseProductButton" id="chooseProductButton-<%- product.id %>">Chọn món này</div>
+					<% } else { -%>	
+						<span>Bạn cần</span>
+						<a class="ml-1 mr-1" href="/users/login">đăng nhập</a>
+						<span>để chọn món này</span>
+					<% } -%>
+                 </div>
+			</div>
+		</div>
+    </div>
+  	<script defer src="/javascripts/chooseProductButton.js"></script>
+  </body>
+</html>

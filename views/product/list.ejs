@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <%- include('../partials/head'); -%>
+  <body class="container">
+    <div class="jumbotron">
+      <div class="row">
+        <div class="btn-group col-8" role="group"> 
+          <a href="" class="btn btn-light">Danh sách sản phẩm</a>
+          <a href="" class="btn btn-light">Thêm sản phẩm</a>
+          <a href="" class="btn btn-light">Xoá sản phẩm</a>
+        </div>
+        <div class="col-2"></div>
+        <a href="/user/logout" class="btn btn-light col-2">Đăng xuất</a>
+      </div>
+      <div class="row d-inline-flex>
+        <% productList.forEach(function(product){ %>
+          <div class="col-6 col-sm-4 col-md-3">
+            <div class="card">
+              <h4 class="card-title"><%- product.name %></h4>
+              <p class="card-text"><%- product.price%></p>
+              <p class="card-text"><%- product.ingredient%></p>
+              <p class="card-text"><%- product.recipe%></p>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </body>
+</html>
