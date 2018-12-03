@@ -56,18 +56,27 @@ router.post('/login', function(req, res, next) {
 });
 router.get('/information', function(req, res, next) {
 	const userID = req.cookies.id;
-	const isAdmin = (req.cookies.id == 1);
-	userManager.getInfomation(connection, userID, function(result) {
-		console.log('result.userInformation=');
-		console.log(result.userInformation);
+	let isAdmin = false, userInfo;
+	const ren = () => {
 		res.render(
 			'user/information', 
 			{
-				userInformation:result.userInformation, 
+				userInformation:userInfo, 
 				userID:userID, 
 				isAdmin:isAdmin,
 				name:req.cookies.name
 			});
+	}
+	let left = 2;
+	userManager.getAccount(connection, userID, function(result) {
+		isAdmin = !!result.account.isAdmin;
+		if (--left == 0) ren();
+	})
+	userManager.getInfomation(connection, userID, function(result) {
+		console.log('result.userInformation=');
+		console.log(result.userInformation);
+		userInfo = result.userInformation;
+		if (--left == 0) ren();
 	});
 });
 router.get('/edit', function(req, res, next) {
@@ -95,8 +104,8 @@ router.post('/edit', function(req, res, next) {
 });
 router.get('/change-password', function(req, res, next) {
 	const userID = req.cookies.id;
-	userManager.getUsername(connection, userID, function(result) {
-		res.render('user/change-password', {username:result.username});
+	userManager.getAccount(connection, userID, function(result) {
+		res.render('user/change-password', {username:result.account.username});
 	});
 });
 router.post('/change-password', function(req, res, next) {
@@ -128,13 +137,6 @@ router.get('/chosen-products', function(req, res, next) {
 	if (!req.cookies.productIDList) {
 		res.render('user/chosen-products', {productList:[], userID:userID, name:req.cookies.name});
 	} else {
-		// var productIDList = [];
-		// for (var i of Object.keys(req.body)) {
-		// 	productIDList.push(parseInt(i.slice(12)));		
-		// }
-		// res.cookie('productIDList', productIDList.join('-'));
-		// res.cookie('productAmountList', productIDList.map(p => 1).join('-'));
-
 		var productIDList = req.cookies.productIDList.split('-'),	
 			productAmountList = req.cookies.productAmountList.split('-'),		
 			left = productIDList.length,
@@ -144,9 +146,8 @@ router.get('/chosen-products', function(req, res, next) {
 				if (results.code != 0) {
 					next();
 				} else {
-					--left;
 					productList.push(results.product);
-					if (left <= 0) {
+					if (--left <= 0) {
 						res.render(
 							'user/chosen-products', 
 							{

@@ -18,9 +18,9 @@
               </div>
               <div class="card-footer">
                 <a href="/product/<%- product.id %>" class="btn btn-success mb-1 w-100">Chi tiết</a>
-                <% if (userID > 1) { -%>
+                <% if (userID > 0 && !isAdmin) { -%>
                   <div class="btn btn-primary w-100 chooseProductButton" id="chooseProductButton-<%- product.id %>">Chọn món này</div>
-                <% } else if (userID == 1) { -%>
+                <% } else if (userID > 0) { -%>
                   <div class="btn-group w-100">
                     <a href="/product/edit/<%- product.id %>" class="btn btn-primary w-100" id="checkboxButton<%- product.id %>">Sửa</a>
                     <a href="/product/delete/<%- product.id %>" class="btn btn-danger w-100" id="checkboxButton<%- product.id %>">Xoá</a>
@@ -30,7 +30,7 @@
             </div>
           </div>
         <% }); %>
-        <% if (userID == 1) { -%>
+        <% if (isAdmin) { -%>
           <div class="card text-left col-12 col-md-4 col-lg-3 p-0">
             <a href="/product/add" class="btn btn-primary btn-lg">Thêm sản phẩm</a>
           </div>          

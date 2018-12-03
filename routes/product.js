@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const productManager = require('../models/product');
+const userManager = require('../models/user');
 const connection = require('../models/databaseConnection');
 
 router.get('/', function(req, res, next) {
@@ -8,7 +9,22 @@ router.get('/', function(req, res, next) {
 });
 router.get('/add', function(req, res, next) {
 	userID = req.cookies.id || 0;
-	res.render('product/add', {userID:userID, name:req.cookies.name});
+	if (req.cookies.id) {
+		userManager.getAccount(connection, req.cookies.id, function(result) {
+			if (result.account.isAdmin) {
+				res.render(
+					'product/add', 
+					{
+						userID:userID, 
+						name:req.cookies.name
+					});
+			} else {
+				next();
+			}
+		});
+	} else {
+		next();
+	}
 });
 router.post('/add', function(req, res, next) {
 	if (req.body.name == '' || 
@@ -57,39 +73,57 @@ router.post('/add', function(req, res, next) {
 	}
 })
 router.get('/:productID', function(req, res, next) {
-	var isAdmin = false;
-	var userID = 0;
-	if (req.cookies) {
-		userID = req.cookies.id;
-		if (userID === 1) {
-			isAdmin = true;
-		}
+	var isAdmin = false,
+		userID = req.cookies.id || 0,
+		product;
+	const ren = () => {
+		res.render(
+			'product/detail', 
+			{
+				product:product, 
+				userID:userID, 
+				isAdmin:isAdmin,
+				name:req.cookies.name
+			});
+	}
+	let left = 1;
+	if (userID > 0) {
+		left = 2;
+		userManager.getAccount(connection, userID, function(result) {
+			isAdmin = result.account.isAdmin;
+			if (--left == 0) ren();
+		});
 	}
 	productManager.detail(connection, req.params.productID, '*', function(result) {
 		if (result.code !== 0) {
 			res.send(result.message);
 		} else {
-			userID = req.cookies.id || 0;
-			res.render(
-				'product/detail', 
-				{
-					product:result.product, 
-					userID:userID, 
-					isAdmin:isAdmin,
-					name:req.cookies.name
-				});
+			product = result.product;
+			if (--left == 0) ren();
 		}
 	});
 });
 router.get('/edit/:productID', function(req, res, next) {
-	productManager.detail(connection, req.params.productID, '*', function(results) {
-		if (results.code !== 0) {
-			next();
-		} else {
-			userID = req.cookies.id || 0;
-			res.render('product/edit', {product:results.product, userID:userID, name:req.cookies.name});
-		}
-	});
+	const userID = req.cookies.id || 0;
+	if (userID <= 0) {
+		console.log('userid = ', userID);
+		next();
+	} else {
+		userManager.getAccount(connection, userID, function(result) {
+			if (!result.account.isAdmin) {
+				next();
+			} else {
+				productManager.detail(connection, req.params.productID, '*', function(results) {
+					if (results.code !== 0) {
+						next();
+					} else {
+						userID = req.cookies.id || 0;
+						res.render('product/edit', {product:results.product, userID:userID, name:req.cookies.name});
+					}
+				});
+			}
+		});
+	}
 });
 router.post('/edit/:productID', function(req, res, next) {
 	const 

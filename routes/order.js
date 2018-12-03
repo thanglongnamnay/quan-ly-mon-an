@@ -39,42 +39,47 @@ router.get('/list-:year-:month-:date', function(req, res, next) {
 						orderList = results.resultList;
 					var left = orderList.reduce((a, b) => a + b.productIDList.length, 0);
 					const ren = function() {
-						if (userID > 1) {
-							orderList = orderList.filter(order => order.userID == userID);
-						}
-						console.log('ren=', productList);
-						res.render(
-							'order/list', 
-							{
-								currentDate:currentDate,
-								productList:productList, 
-								orderList:orderList, 
-								userID:userID,
-								name:req.cookies.name
-							});
-						// res.send({productList:productList, orderList:orderList, userID:userID});
-					}
-					for (let order of orderList) {
-						for (let productID of order.productIDList) {
-							if (!productIDList.find(p => p == productID)) {
-								productIDList.push(productID);
-								productManager.detail(connection, productID, 'id, name, price', function(result) {
-									console.log('code=', result.code);
-									if (result.code == 0) {
-										productList.push(result.product);
-									} else {
-										productList.push(deletedProduct(productID));
-									}
-									if (--left == 0) {
-										ren();
-									}
+						userManager.getAccount(connection, userID, function(result) {
+							if (!result.account.isAdmin) {
+								orderList = orderList.filter(order => order.userID == userID);
+							}
+							console.log('ren=', productList);
+							res.render(
+								'order/list', 
+								{
+									currentDate:currentDate,
+									productList:productList, 
+									orderList:orderList, 
+									userID:userID,
+									isAdmin:!!result.account.isAdmin,
+									name:req.cookies.name
 								});
-							} else if (--left == 0) {
-								ren();
+						});
+					}
+					if (orderList.length == 0) {
+						ren();
+					} else {
+						for (let order of orderList) {
+							for (let productID of order.productIDList) {
+								if (!productIDList.find(p => p == productID)) {
+									productIDList.push(productID);
+									productManager.detail(connection, productID, 'id, name, price', function(result) {
+										console.log('code=', result.code);
+										if (result.code == 0) {
+											productList.push(result.product);
+										} else {
+											productList.push(deletedProduct(productID));
+										}
+										if (--left == 0) {
+											ren();
+										}
+									});
+								} else if (--left == 0) {
+									ren();
+								}
 							}
 						}
 					}
-					if (orderList.length == 0) ren();
 				} else {
 					next();
 				}
@@ -122,15 +127,16 @@ router.post('/add', function(req, res, next) {
 });
 
 router.post('/:orderID/next-status', function(req, res, next) {
-	if (req.cookies.id == 1) {
-		console.log('orderid=',req.params.orderID);
-		orderManager.nextStatus(connection, req.params.orderID, function(result) {
-			// res.redirect('/order/list');
-			res.send(result);
-		});
-	} else {
-		next();
-	}
+	userManager.getAccount(connection, req.cookies.id, function(result) {
+		if (result.account.isAdmin) {
+			console.log('orderid=',req.params.orderID);
+			orderManager.nextStatus(connection, req.params.orderID, function(result) {
+				res.send(result);
+			});
+		} else {
+			next();
+		}
+	});
 });
 
 module.exports = router;

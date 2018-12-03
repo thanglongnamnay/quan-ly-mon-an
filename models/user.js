@@ -47,15 +47,15 @@ const userManager = {
         }
       });
   },
-  getUsername:function(connection, userID, callback) {
+  getAccount:function(connection, userID, callback) {
     connection.query(
-      'Select username FROM account WHERE id = ?',
+      'Select * FROM account WHERE id = ?',
       [userID],
       function(error, results, fields) {
         if (error || results.length <= 0) {
           callback({code:-1, message:"Có lỗi"});
         } else {
-          callback({code:0, username:results[0].username});
+          callback({code:0, account:results[0]});
         }
       });
   },

@@ -44,7 +44,7 @@
 		    	</table>
 		    	<h4 id="total-price">Tổng tiền: <%= totalPrice %>đ</h4>
 		    	<h4 class="orderStatus" id="orderStatus-<%= order.id %>">Trạng thái: <%= order.status %></h4>
-		    	<% if (userID == 1 && order.status != 'Đã xong') { -%>
+		    	<% if (isAdmin && order.status != 'Đã xong') { -%>
 	    			<button type="submit" class="btn btn-primary btn-lg changeStatusBtn" id="changeStatus-<%= order.id %>">
 		    		<%= order.status == 'Đang chờ' ? 'Đang làm' : 'Đã xong' %>
 		    		</button>

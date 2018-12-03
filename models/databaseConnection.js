@@ -1,5 +1,5 @@
 const mysql      = require('mysql');
-const connection = mysql.createConnection({
+let connection = mysql.createConnection({
   host     : '127.0.0.1',
   user     : 'root',
   password : '',
@@ -10,6 +10,17 @@ connection.connect(function(err){
       console.log("Database is connected ");
   } else {
       console.log("Error connecting database", err);
+    //   let createConnection = mysql.createConnection({
+		  // host     : '127.0.0.1',
+		  // user     : 'root',
+		  // password : ''
+    //   });
+    //   createConnection.connect(function(err) {
+    //   	con.query("CREATE DATABASE quan-ly-mon-an", function (err, result) {});
+    //   	connecttion.connect(function(err) {
+      		
+    //   	})
+    //   });
   }
 });
 module.exports = connection;

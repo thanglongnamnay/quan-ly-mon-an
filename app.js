@@ -10,7 +10,7 @@ var productRouter = require('./routes/product');
 var orderRouter = require('./routes/order');
 
 var app = express();
-
+console.log('app.js');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

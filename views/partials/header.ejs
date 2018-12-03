@@ -2,11 +2,11 @@
   <div class="col-6">
     <a href="/"><h2>Món ngon mỗi ngày</h2></a>
   </div>
-  <% if (typeof userID == 'undefined') var userID = 0 -%>
+  <% if (typeof userID == 'undefined') {var userID = 0, isAdmin = false;} -%>
   <div class="btn-group col-6 w-100 h-50" role="group"> 
     <% if (userID > 0) { -%>
       <a href="/users/information" class="btn btn-light btn-sm w-100 text-sm"><%= name %></a>
-      <% if (userID != 1) { -%>
+      <% if (!isAdmin) { -%>
         <a href="/users/chosen-products" class="btn btn-light btn-sm w-100 text-sm">Danh sách món đã chọn</a>
       <% } else { -%>
         <a href="/order/list" class="btn btn-light btn-sm w-100 text-sm">Danh sách đơn hàng</a>
