@@ -1,41 +1,37 @@
 const userManager = {
-  register:function(connection, name, address, username, password, rePassword, callback) {
+  register:function(connection, name, address, username, password, callback) {
     // console.log("req:",req);
-    if (password != rePassword) {
-      callback({code: 204, message: 'Mật khẩu không trùng khớp'});
-    } else {
-      var account={
-        "id":null,
-        "username":username,
-        "password":password,
-        "isAdmin":0,
-      };
-      connection.query(
-        'INSERT INTO account SET ?',
-        account, 
-        function (error, results, fields) {
-          if (error) {
-            callback({code: -1, message: 'Tên tài khoản đã tồn tại'});
-          } else {
-            connection.query(
-              'SELECT id FROM account WHERE username = ?', 
-              [username],
-              function(error, results, fields) {
-                var accountInfo = {
-                  "id":results[0].id,
-                  "name":name,
-                  "address":address,
-                }
-                connection.query(
-                  'INSERT INTO accountinfo SET ?',
-                  accountInfo,
-                  function (error, results, fields) {
-                    callback({code: accountInfo.id, message: 'Thành công'});
-                  });
-              });
-          }
-      });
-    }
+    var account={
+      "id":null,
+      "username":username,
+      "password":password,
+      "isAdmin":0,
+    };
+    connection.query(
+      'INSERT INTO account SET ?',
+      account, 
+      function (error, results, fields) {
+        if (error) {
+          callback({code: -1, message: 'Tên tài khoản đã tồn tại'});
+        } else {
+          connection.query(
+            'SELECT id FROM account WHERE username = ?', 
+            [username],
+            function(error, results, fields) {
+              var accountInfo = {
+                "id":results[0].id,
+                "name":name,
+                "address":address,
+              }
+              connection.query(
+                'INSERT INTO accountinfo SET ?',
+                accountInfo,
+                function (error, results, fields) {
+                  callback({code: accountInfo.id, message: 'Thành công'});
+                });
+            });
+        }
+    });
   },
   login:function(connection, username, password, callback){
     connection.query(
@@ -51,6 +47,33 @@ const userManager = {
         }
       });
   },
+  getUsername:function(connection, userID, callback) {
+    connection.query(
+      'Select username FROM account WHERE id = ?',
+      [userID],
+      function(error, results, fields) {
+        if (error || results.length <= 0) {
+          callback({code:-1, message:"Có lỗi"});
+        } else {
+          callback({code:0, username:results[0].username});
+        }
+      });
+  },
+  setPassword:function(connection, userID, newPassword, callback) {
+    const acc = {
+      password:newPassword
+    }
+    connection.query(
+      'UPDATE account SET ? WHERE id = ? ',
+      [acc, userID],
+      function(error, results, fields) {
+        if (error) {
+          callback({code:-1, message:"Lỗi"});
+        } else {
+          callback({code:0, message:"Ngon"});
+        }
+      });
+  },
   getInfomation:function(connection, userID, callback) {
     connection.query(
       'SELECT * FROM accountinfo WHERE id = ?',
@@ -62,7 +85,7 @@ const userManager = {
           console.log(results);
           callback({code:-1, message:"Lỗi"});
         } else {
-          callback({code:results[0].id, userInformation:results[0]});
+          callback({code:0, userInformation:results[0]});
         }
       });
   },

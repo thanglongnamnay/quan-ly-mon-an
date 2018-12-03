@@ -4,7 +4,7 @@ const orderManager = {
 		const order = {
 			userID:userID,
 			name:userName,
-			time:new Date().toISOString().slice(0, 19).replace('T', ' '),
+			time:new Date(),
 			productIDList:listToListStr(productIDList),
 			amountOfProductList:listToListStr(amountOfProductList),
 			total:totalPrice
@@ -65,7 +65,7 @@ const orderManager = {
 					console.log(err);
 					callback({code:-1})
 				} else {
-					for (r of results) {
+					for (let r of results) {
 						r.productIDList = listStrToList(r.productIDList);
 						r.amountOfProductList = listStrToList(r.amountOfProductList);
 					}

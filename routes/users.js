@@ -22,15 +22,21 @@ router.post('/register', function(req, res, next) {
 		username = req.body.username,
 		password = req.body.password,
 		rePassword = req.body.rePassword;
-	userManager.register(connection, name, address, username, password, rePassword, function(result) {
-		if (result.code !== -1) {
-    		res.clearCookie('id');
-			res.cookie('id', result.code);
-			res.cookie('name', name);
-			res.redirect('/');
-		}
-		else res.render('register', {error: result.message, username: username});
-	});
+	if (password != rePassword) {
+		res.render('register', {error: "Mật khẩu không trùng khớp", username: username});
+	} else if (password.length < 8) {
+		res.render('register', {error: "Mật khẩu ngắn quá, cần 8 ký tự trở lên", username: username});
+	} else {
+		userManager.register(connection, name, address, username, password, rePassword, function(result) {
+			if (result.code !== -1) {
+	    		res.clearCookie('id');
+				res.cookie('id', result.code);
+				res.cookie('name', name);
+				res.redirect('/');
+			}
+			else res.render('register', {error: result.message, username: username});
+		});
+	}
 });
 router.post('/login', function(req, res, next) {
 	const username = req.body.username;
@@ -66,7 +72,6 @@ router.get('/information', function(req, res, next) {
 });
 router.get('/edit', function(req, res, next) {
 	const userID = req.cookies.id;
-	const isAdmin = (req.cookies.id == 1);
 	userManager.getInfomation(connection, userID, function(result) {
 		console.log('result.userInformation=');
 		console.log(result.userInformation);
@@ -75,20 +80,43 @@ router.get('/edit', function(req, res, next) {
 			{
 				userInformation:result.userInformation,
 				userID:userID, 
-				isAdmin:isAdmin,
 				name:req.cookies.name
 			});
 	});
 });
 router.post('/edit', function(req, res, next) {
 	const userID = req.cookies.id;
-	const isAdmin = (req.cookies.id == 1);
 	const userInfo = {
 		address:req.body.address,
 	}
 	userManager.editInformation(connection, userID, userInfo, function(result) {
 		res.redirect('/users/information');
 	});
+});
+router.get('/change-password', function(req, res, next) {
+	const userID = req.cookies.id;
+	userManager.getUsername(connection, userID, function(result) {
+		res.render('user/change-password', {username:result.username});
+	});
+});
+router.post('/change-password', function(req, res, next) {
+	const userID = req.cookies.id,
+		username = req.body.username,
+		newPassword = req.body.password,
+		rePassword = req.body.rePassword;
+	if (newPassword !=  rePassword) {
+		res.render('user/change-password', {username:username, error:"Mật khẩu không trùng khớp"});
+	} else if (newPassword.length < 8) {
+		res.render('user/change-password', {username:username, error:"Mật khẩu ngắn quá, cần 8 ký tự trở lên"});
+	} else {
+		userManager.setPassword(connection, userID, newPassword, function(result) {
+			if (result.code != 0) {
+				res.render('user/change-password', {username:username, error:"Có lỗi xảy ra"});
+			} else {
+				res.redirect('/users/information');
+			}
+		});
+	}
 });
 router.get('/logout', function(req, res, next) {
 	res.clearCookie('id');

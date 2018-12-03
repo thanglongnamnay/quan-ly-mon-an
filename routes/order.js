@@ -4,13 +4,13 @@ const userManager = require('../models/user');
 const productManager = require('../models/product');
 const orderManager = require('../models/order');
 const connection = require('../models/databaseConnection');
-const emptyProduct = productID => {
+const deletedProduct = productID => {
 	return {
-		id:productID,
+		id: parseInt(productID),
 		name: 'Sản phẩm đã bị xoá',
 		ingredient: '',
 		recipe: '',
-		price: '0',
+		price: 0,
 	}
 }
 
@@ -54,8 +54,8 @@ router.get('/list-:year-:month-:date', function(req, res, next) {
 							});
 						// res.send({productList:productList, orderList:orderList, userID:userID});
 					}
-					for (order of orderList) {
-						for (productID of order.productIDList) {
+					for (let order of orderList) {
+						for (let productID of order.productIDList) {
 							if (!productIDList.find(p => p == productID)) {
 								productIDList.push(productID);
 								productManager.detail(connection, productID, 'id, name, price', function(result) {
@@ -63,7 +63,7 @@ router.get('/list-:year-:month-:date', function(req, res, next) {
 									if (result.code == 0) {
 										productList.push(result.product);
 									} else {
-										productList.push(emptyProduct(productID));
+										productList.push(deletedProduct(productID));
 									}
 									if (--left == 0) {
 										ren();
@@ -111,12 +111,6 @@ router.post('/add', function(req, res, next) {
 				res.redirect('/order/list');
 			});
 	}
-	// for (i of Object.keys(req.body)) {
-	// 	if (req.body[i] > 0) {
-	// 		productIDList.push(i.slice(15));
-	// 		productAmountList.push(req.body[i]);
-	// 	}
-	// }
 	if (!req.cookies.id) {
 		next();
 	} else {
