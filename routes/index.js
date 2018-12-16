@@ -5,7 +5,7 @@ const userManager = require('../models/user');
 const connection = require('../models/databaseConnection');
 router.get('/', function(req, res, next) {
 	productManager.getList(connection, function(productList) {
-		var isAdmin = false,
+		let isAdmin = false,
 			userID = 0;
 		const ren = () => {
 			res.render(
@@ -16,18 +16,17 @@ router.get('/', function(req, res, next) {
 					isAdmin:isAdmin, 
 					name:req.cookies.name
 				});
-		}
+		};
 		if (req.cookies.id) {
 			userID = req.cookies.id;
 			let left = 2;
 			userManager.getAccount(connection, userID, function(result) {
-				console.log('isAdmin = ', !!result.account.isAdmin)
+				console.log('isAdmin = ', !!result.account.isAdmin);
 				isAdmin = !!result.account.isAdmin;
-				if (--left == 0) ren();
+				if (--left === 0) ren();
 			});
-			userManager.getInfomation(connection, userID, function(result) {
-				userInfo = result.userInformation;
-				if (--left == 0) ren();
+			userManager.getInformation(connection, userID, function(result) {
+				if (--left === 0) ren();
 			});
 		} else {
 			ren();

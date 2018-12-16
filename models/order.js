@@ -1,4 +1,9 @@
-const statusList = ['Đang chờ', 'Đang làm', 'Đã xong'];
+const listStrToList = function(listStr) {
+	return listStr.split(',');
+};
+const listToListStr = function(list) {
+	return list.join(',');
+};
 const orderManager = {
 	add:function(connection, userID, userName, productIDList, amountOfProductList, totalPrice, callback) {
 		const order = {
@@ -8,7 +13,7 @@ const orderManager = {
 			productIDList:listToListStr(productIDList),
 			amountOfProductList:listToListStr(amountOfProductList),
 			total:totalPrice
-		}
+		};
 		connection.query(
 			'INSERT INTO orders SET ?',
 			[order],
@@ -21,9 +26,9 @@ const orderManager = {
 			});
 	},
 	edit:function(connection, order, callback) {
-		if (order.productIDList != undefined)
+		if (order.productIDList)
 			order.productIDList = listToListStr(order.productIDList);
-		if (order.amountOfProductList != undefined)
+		if (order.amountOfProductList)
 			order.amountOfProductList = listToListStr(order.amountOfProductList);
 		console.log('edit: order = ' , order);
 		connection.query(
@@ -31,25 +36,10 @@ const orderManager = {
 			[order, order.id],
 			function(error, result, field) {
 				if (error) {
-					console.log('err in order.edit. ', error)
+					console.log('err in order.edit. ', error);
 					callback({code:-1});
 				} else {
 					callback({code:0});
-				}
-			});
-	},
-	getDetail:function(connection, orderID, callback) {
-		connection.query(
-			'SELECT * FROM orders WHERE id = ?',
-			[orderID],
-			function(error, result, fields) {
-				console.log('detail=', result);
-				if (error || result.length <= 0 || !result) {
-					callback({code:-1});
-				} else {
-					result[0].productIDList = listStrToList(result[0].productIDList);
-					result[0].amountOfProductList = listStrToList(result[0].amountOfProductList);
-					callback({code:0, order:result[0]});
 				}
 			});
 	},
@@ -63,7 +53,7 @@ const orderManager = {
 				if (err) {
 					console.log('error order.getlist');
 					console.log(err);
-					callback({code:-1})
+					callback({code:-1});
 				} else {
 					for (let r of results) {
 						r.productIDList = listStrToList(r.productIDList);
@@ -87,18 +77,18 @@ const orderManager = {
 			});
 	},
 	nextStatus:function(connection, orderID, callback) {
-		that = this;
+		let that = this;
 		that.getStatus(connection, orderID, function(result) {
-			if (result.code == 0) {
-				if (result.order.status != 'Đã xong') {
+			if (result.code === 0) {
+				if (result.order.status !== 'Đã xong') {
 					switch (result.order.status) {
-						case "Đang chờ":
-							result.order.status = "Đang làm";
-							break;
-						case "Đang làm":
-							result.order.status = "Đã xong";
-							break;
-						}
+					case 'Đang chờ':
+						result.order.status = 'Đang làm';
+						break;
+					case 'Đang làm':
+						result.order.status = 'Đã xong';
+						break;
+					}
 					result.order.id = orderID;
 					that.edit(connection, result.order, function(results) {
 						console.log('end nextstatus');
@@ -110,11 +100,5 @@ const orderManager = {
 			}
 		});
 	}
-}
-listStrToList = function(listStr) {
-	return listStr.split(',');
-}
-listToListStr = function(list) {
-	return list.join(',');
-}
+};
 module.exports = orderManager;

@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
 	res.redirect('..');
 });
 router.get('/add', function(req, res, next) {
-	userID = req.cookies.id || 0;
+	const userID = req.cookies.id || 0;
 	if (req.cookies.id) {
 		userManager.getAccount(connection, req.cookies.id, function(result) {
 			if (result.account.isAdmin) {
@@ -27,11 +27,11 @@ router.get('/add', function(req, res, next) {
 	}
 });
 router.post('/add', function(req, res, next) {
-	if (req.body.name == '' || 
-		req.body.price == '' || 
-		req.body.ingredient == '' || 
-		req.body.recipe == '') {
-		userID = req.cookies.id || 0;
+	if (req.body.name === '' ||
+		req.body.price === '' ||
+		req.body.ingredient === '' ||
+		req.body.recipe === '') {
+		const userID = req.cookies.id || 0;
 		res.render(
 			'product/add', 
 			{
@@ -56,8 +56,8 @@ router.post('/add', function(req, res, next) {
 			product.price, 
 			product.description, 
 			function(result) {
-				if (result.code != 0) {
-					userID = req.cookies.id || 0;
+				if (result.code !== 0) {
+					const userID = req.cookies.id || 0;
 					res.render(
 						'product/add', 
 						{
@@ -71,9 +71,9 @@ router.post('/add', function(req, res, next) {
 				}
 			});
 	}
-})
+});
 router.get('/:productID', function(req, res, next) {
-	var isAdmin = false,
+	let isAdmin = false,
 		userID = req.cookies.id || 0,
 		product;
 	const ren = () => {
@@ -85,13 +85,13 @@ router.get('/:productID', function(req, res, next) {
 				isAdmin:isAdmin,
 				name:req.cookies.name
 			});
-	}
+	};
 	let left = 1;
 	if (userID > 0) {
 		left = 2;
 		userManager.getAccount(connection, userID, function(result) {
 			isAdmin = result.account.isAdmin;
-			if (--left == 0) ren();
+			if (--left === 0) ren();
 		});
 	}
 	productManager.detail(connection, req.params.productID, '*', function(result) {
@@ -99,12 +99,12 @@ router.get('/:productID', function(req, res, next) {
 			res.send(result.message);
 		} else {
 			product = result.product;
-			if (--left == 0) ren();
+			if (--left === 0) ren();
 		}
 	});
 });
 router.get('/edit/:productID', function(req, res, next) {
-	const userID = req.cookies.id || 0;
+	let userID = req.cookies.id || 0;
 	if (userID <= 0) {
 		console.log('userid = ', userID);
 		next();
@@ -117,7 +117,6 @@ router.get('/edit/:productID', function(req, res, next) {
 					if (results.code !== 0) {
 						next();
 					} else {
-						userID = req.cookies.id || 0;
 						res.render('product/edit', {product:results.product, userID:userID, name:req.cookies.name});
 					}
 				});
@@ -132,19 +131,19 @@ router.post('/edit/:productID', function(req, res, next) {
 		recipe = req.body.recipe,
 		description = req.body.description;
 	productManager.edit(
-			connection, 
-			req.params.productID,
-			ingredient, 
-			recipe, 
-			price, 
-			description,
-			function(results) {
-				if (results.code != 0) {
-					next();
-				} else {
-					res.redirect('/product/' + req.params.productID);
-				}
-			});
+		connection, 
+		req.params.productID,
+		ingredient, 
+		recipe, 
+		price, 
+		description,
+		function(results) {
+			if (results.code !== 0) {
+				next();
+			} else {
+				res.redirect('/product/' + req.params.productID);
+			}
+		});
 });
 router.get('/delete/:productID', function(req, res, next) {
 	productManager.delete(connection, req.params.productID, function(results) {

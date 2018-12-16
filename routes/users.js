@@ -22,14 +22,14 @@ router.post('/register', function(req, res, next) {
 		username = req.body.username,
 		password = req.body.password,
 		rePassword = req.body.rePassword;
-	if (password != rePassword) {
-		res.render('register', {error: "Mật khẩu không trùng khớp", username: username});
+	if (password !== rePassword) {
+		res.render('register', {error: 'Mật khẩu không trùng khớp', username: username});
 	} else if (password.length < 8) {
-		res.render('register', {error: "Mật khẩu ngắn quá, cần 8 ký tự trở lên", username: username});
+		res.render('register', {error: 'Mật khẩu ngắn quá, cần 8 ký tự trở lên', username: username});
 	} else {
-		userManager.register(connection, name, address, username, password, rePassword, function(result) {
+		userManager.register(connection, name, address, username, password, function(result) {
 			if (result.code !== -1) {
-	    		res.clearCookie('id');
+				res.clearCookie('id');
 				res.cookie('id', result.code);
 				res.cookie('name', name);
 				res.redirect('/');
@@ -44,12 +44,12 @@ router.post('/login', function(req, res, next) {
 	userManager.login(connection, username, password, function(result) {
 		console.log('res= ' + result);
 		if (result.code !== -1) {
-			userManager.getInfomation(connection, result.code, function(result2) {
-	    		res.clearCookie('id');
+			userManager.getInformation(connection, result.code, function(result2) {
+				res.clearCookie('id');
 				res.cookie('id', result.code);
-				res.cookie('name', result2.userInformation.name)
+				res.cookie('name', result2.userInformation.name);
 				res.redirect('/');
-			})
+			});
 		}
 		else res.render('login', {error: result.message, username: username});
 	});
@@ -66,22 +66,22 @@ router.get('/information', function(req, res, next) {
 				isAdmin:isAdmin,
 				name:req.cookies.name
 			});
-	}
+	};
 	let left = 2;
 	userManager.getAccount(connection, userID, function(result) {
 		isAdmin = !!result.account.isAdmin;
-		if (--left == 0) ren();
-	})
-	userManager.getInfomation(connection, userID, function(result) {
+		if (--left === 0) ren();
+	});
+	userManager.getInformation(connection, userID, function(result) {
 		console.log('result.userInformation=');
 		console.log(result.userInformation);
 		userInfo = result.userInformation;
-		if (--left == 0) ren();
+		if (--left === 0) ren();
 	});
 });
 router.get('/edit', function(req, res, next) {
 	const userID = req.cookies.id;
-	userManager.getInfomation(connection, userID, function(result) {
+	userManager.getInformation(connection, userID, function(result) {
 		console.log('result.userInformation=');
 		console.log(result.userInformation);
 		res.render(
@@ -97,7 +97,7 @@ router.post('/edit', function(req, res, next) {
 	const userID = req.cookies.id;
 	const userInfo = {
 		address:req.body.address,
-	}
+	};
 	userManager.editInformation(connection, userID, userInfo, function(result) {
 		res.redirect('/users/information');
 	});
@@ -113,14 +113,14 @@ router.post('/change-password', function(req, res, next) {
 		username = req.body.username,
 		newPassword = req.body.password,
 		rePassword = req.body.rePassword;
-	if (newPassword !=  rePassword) {
-		res.render('user/change-password', {username:username, error:"Mật khẩu không trùng khớp"});
+	if (newPassword !==  rePassword) {
+		res.render('user/change-password', {username:username, error:'Mật khẩu không trùng khớp'});
 	} else if (newPassword.length < 8) {
-		res.render('user/change-password', {username:username, error:"Mật khẩu ngắn quá, cần 8 ký tự trở lên"});
+		res.render('user/change-password', {username:username, error:'Mật khẩu ngắn quá, cần 8 ký tự trở lên'});
 	} else {
 		userManager.setPassword(connection, userID, newPassword, function(result) {
-			if (result.code != 0) {
-				res.render('user/change-password', {username:username, error:"Có lỗi xảy ra"});
+			if (result.code !== 0) {
+				res.render('user/change-password', {username:username, error:'Có lỗi xảy ra'});
 			} else {
 				res.redirect('/users/information');
 			}
@@ -137,13 +137,13 @@ router.get('/chosen-products', function(req, res, next) {
 	if (!req.cookies.productIDList) {
 		res.render('user/chosen-products', {productList:[], userID:userID, name:req.cookies.name});
 	} else {
-		var productIDList = req.cookies.productIDList.split('-'),	
+		let productIDList = req.cookies.productIDList.split('-'),
 			productAmountList = req.cookies.productAmountList.split('-'),		
 			left = productIDList.length,
 			productList = [];
 		for (let productID of productIDList) {
 			productManager.detail(connection, productID, 'id, name, price', function(results) {
-				if (results.code != 0) {
+				if (results.code !== 0) {
 					next();
 				} else {
 					productList.push(results.product);
@@ -158,7 +158,7 @@ router.get('/chosen-products', function(req, res, next) {
 							});
 					}
 				}
-			})
+			});
 		}
 	}
 });

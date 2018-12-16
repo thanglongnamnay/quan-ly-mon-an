@@ -4,7 +4,7 @@
 		productPriceDivList = [...document.getElementsByClassName('product-price')],
 		productPriceList = productPriceDivList.map(div => parseInt(div.innerText)),
 		totalPriceDiv = document.getElementById('total-price'),
-		totalPriceInput = document.getElementById('totalPriceInput');
+		totalPriceInput = document.getElementById('totalPriceInput'),
 		productTotalPriceList = [...productPriceList];
 	totalPriceDiv.innerText = `Tổng tiền: ${productTotalPriceList.reduce((a, b) => a + b, 0)}đ`;
 	for (let i = 0; i < productAmountDivList.length; ++i) {
@@ -14,6 +14,6 @@
 			let totalPrice = productTotalPriceList.reduce((a, b) => a + b, 0);
 			totalPriceDiv.innerText = `Tổng tiền: ${totalPrice}đ`;
 			totalPriceInput.value = totalPrice;
-		}
+		};
 	}
 })();
