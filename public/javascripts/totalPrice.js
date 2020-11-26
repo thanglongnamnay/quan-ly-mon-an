@@ -16,4 +16,7 @@
 			totalPriceInput.value = totalPrice;
 		};
 	}
+	let totalPrice = productTotalPriceList.reduce((a, b) => a + b, 0);
+	totalPriceDiv.innerText = `Tổng tiền: ${totalPrice}đ`;
+	totalPriceInput.value = totalPrice;
 })();
