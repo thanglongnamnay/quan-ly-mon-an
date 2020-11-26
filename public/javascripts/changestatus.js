@@ -6,8 +6,7 @@ for (let btnDiv of changStatusDivList) {
 		let xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function() {
 			if (this.readyState === 4 && this.status === 200) {
-				let result;
-				eval('let result = ' + this.response);
+				let result = JSON.parse(this.response);
 				if (result.status === 'Đang làm') {
 					document.
 						getElementById('orderStatus-'+orderID).
